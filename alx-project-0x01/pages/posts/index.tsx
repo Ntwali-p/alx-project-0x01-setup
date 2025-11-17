@@ -1,39 +1,38 @@
-import React from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import PostCard from "@/components/common/PostCard";
 import Header from "@/components/layout/Header";
+import { PostProps } from "@/interfaces";
 
-const PostsPage: React.FC = () => {
+const Posts: React.FC<PostProps[]> = ({ posts }) => {
+  console.log(posts)
   return (
-    <div>
+    <div className="flex flex-col h-screen">
       <Header />
-      <main className="p-10">
-        <h1 className="text-4xl font-bold mb-6">Posts</h1>
-        <p>This is the posts page.</p>
+      <main className="p-4">
+        <div className="flex justify-between">
+          <h1 className=" text-2xl font-semibold">Post Content</h1>
+          <button className="bg-blue-700 px-4 py-2 rounded-full text-white">Add Post</button>
+        </div>
+        <div className="grid grid-cols-3 gap-2 ">
+          {
+            posts?.map(({ title, body, userId, id }: PostProps, key: number) => (
+              <PostCard title={title} body={body} userId={userId} id={id} key={key} />
+            ))
+          }
+        </div>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default PostsPage;
+export async function getStaticProps() {
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const posts = await response.json();
 
+  return {
+    props: {
+      posts
+    }
+  }
+}
 
-const PostsPage: React.FC = () => {
-  return (
-    <>
-      <Header />
-      <main className="p-10">
-        <h1 className="text-4xl font-bold mb-6">Posts</h1>
-
-        <PostCard
-          title="Sample Post"
-          body="This is a placeholder post for setup verification."
-        />
-      </main>
-      <Footer />
-    </>
-  );
-};
-
-export default PostsPage;
+export default Posts;
